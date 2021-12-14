@@ -261,8 +261,14 @@ def prediction(L):
     taue = L[(3 * N - 3):(4 * N - 3)]  # We suppose the values are already sorted
     e = L[(4 * N - 3):(5 * N - 3)]
     r = L[(5 * N - 3):(6 * N - 3)]
-    return gain_pred(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr)
-
+    gain_opt =  gain_pred(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr)
+    file = open("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + E + "_prediction.txt",'w')
+    file.write("Paramètres optimisés : " + str(L) + "\n")
+    file.write("Gain obtenu : " + str(gain_opt) + "\n")
+    file.write("Mémoires : " + str(M) + "\n")
+    file.write("Variations de Mémoires : " + str(variation_mem(M)))
+    file.close()
+    
 
 def parcours_local(param, fit, step):
     end = True
@@ -654,10 +660,11 @@ def main(i,j,k):
     E = E_liste[k]
     how_long()
     P_opt = genetic_opt()
+    prediction(P_opt)
     for Fi in range(len(E_liste)):
         F = E_liste[Fi]
         F, E = E, F
-        res_gamma = gamma_draw(P_opt)
+        gamma_draw(P_opt)
         F, E = E, F
     """N = 5
     T = 100
@@ -673,5 +680,5 @@ def main(i,j,k):
     file.close()"""
 
 i,j,k = sys.argv[1:]
-i,j,k = int(i), int(j), int(k)
+i,j,k = int(i),int(j),int(k)
 main(i,j,k)
