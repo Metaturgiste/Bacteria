@@ -673,4 +673,5 @@ def main(i,j,k):
     file.close()"""
 
 i,j,k = sys.argv[1:]
+i,j,k = int(i), int(j), int(k)
 main(i,j,k)
