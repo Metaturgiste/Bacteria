@@ -13,7 +13,7 @@ from operator import mul
 from functools import reduce
 import sys
 
-N_string = ['2', '5', '8','11']
+N_string = ['2', '5', '8', '11']
 N_liste = [2, 5, 8, 11]
 T_string = ['10', '100', '1000']
 T_liste = [10, 100, 1000]
@@ -23,7 +23,7 @@ tau_liste = [[0.5, 0.1, 1], [0.1, 1, 3, 10, 0.01, 0.1, 1, 3, 10],
              [0.1, 0.5, 1, 3, 10, 30, 100, 0.01, 0.1, 0.5, 1, 3, 10, 30, 100]]
 tau = [0]
 
-E_liste = ['cos(x)', 'sin(x^2)', '0', '1', 'croissant', 'random', 'Par_palier', 'sin_amorti']
+E_liste = ['cos(x)', 'tanh', '0', '1', 'croissant', 'random', 'Par_palier', 'sin_amorti','cos_petit']
 E = E_liste[0]
 F = E_liste[0]
 
@@ -35,6 +35,8 @@ nbBad = 3
 nbRandom = 0
 nbMutation = 4
 nbNew = 2
+nbVib = 20
+depthVib = 5
 randE = []
 
 M_List = ["M" + str(i) for i in range(N)]
@@ -54,7 +56,7 @@ len_meta_list = [len(i) for i in meta_para_liste]
 full_len = reduce(mul, len_meta_list, 1)
 
 
-def Env(x,Ef):
+def Env(x, Ef):
     if E == "Par_palier":
         if (x >= 0 and x < 6) or (x >= 30 and x < 47) or (x >= 70 and x < 79):
             return -1
@@ -64,9 +66,9 @@ def Env(x,Ef):
         else:
             return 1
     elif E == "cos(x)":
-        return cos(x/12)
-    elif E == "sin(x^2)":
-        return sin((6*x/T)**2)
+        return cos(x / 12)
+    elif E == "tanh":
+        return tanh((10 * x / T) - 5)
     elif E == "0":
         return 0
     elif E == "1":
@@ -74,9 +76,12 @@ def Env(x,Ef):
     elif E == "random":
         return Ef[x]
     elif E == "sin_amorti":
-        return ((x + 1) ** (-1 / 3)) * sin(12*(x/T))
+        return ((x + 1) ** (-1 / 3)) * sin(12 * (x / T))
     elif E == 'croissant':
         return 2 * (x / T) - 1
+    elif E == 'cos_petit':
+        return 0.1*cos(x/12)
+
 
 def noisei(x):
     return 0
@@ -97,10 +102,10 @@ def gain(cminus, cplus, tauminus, taue, e, r):
     Ef = []
     if E == "random":
         Ef = [2 * np.random.random() - 1 for i in range(T)]
-    M = [[Env(0,Ef)] * T for i in range(N)]
+    M = [[Env(0, Ef)] * T for i in range(N)]
     for t in range(T - 1):
         for i in range(N):
-            sume = [Env(s,Ef) * m(t - s, taue[i]) for s in range(t + 1)]
+            sume = [Env(s, Ef) * m(t - s, taue[i]) for s in range(t + 1)]
             if i == 0:
                 M[0][t + 1] = tanh(cplus[0] * M[1][t] + e[0] * sum(sume) + noisei(t))
             else:
@@ -119,7 +124,7 @@ def gain(cminus, cplus, tauminus, taue, e, r):
         c = [elt ** 2 for elt in cplus]
         b = b + c
         d = [elt ** 2 for elt in r]
-        Fit[t] = np.exp(- (wf * (R[t] - Env(t,Ef)) ** 2) - (we * sum(a)) - (wc * sum(b)) - (wr * sum(d)))
+        Fit[t] = np.exp(- (wf * (R[t] - Env(t, Ef)) ** 2) - (we * sum(a)) - (wc * sum(b)) - (wr * sum(d)))
     return sum(Fit)
 
 
@@ -150,7 +155,7 @@ def gain_draw(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr):
     Ef = []
     if E == "random":
         Ef = [2 * np.random.random() - 1 for j in range(T)]
-    M = [[Env(0,Ef)] * T for j in range(N)]
+    M = [[Env(0, Ef)] * T for j in range(N)]
     for t in range(T - 1):
         for i in range(N):
             sume = [Env(s, Ef) * m(t - s, taue[i]) for s in range(t + 1)]
@@ -172,12 +177,12 @@ def gain_draw(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr):
         c = [elt ** 2 for elt in cplus]
         b = b + c
         d = [elt ** 2 for elt in r]
-        Fit[t] = np.exp(- (wf * (R[t] - Env(t,Ef)) ** 2) - (we * sum(a)) - (wc * sum(b)) - (wr * sum(d)))
-    draw(R,Ef)
+        Fit[t] = np.exp(- (wf * (R[t] - Env(t, Ef)) ** 2) - (we * sum(a)) - (wc * sum(b)) - (wr * sum(d)))
+    draw(R, Ef)
     return sum(Fit)
 
 
-def draw(R,Ef):
+def draw(R, Ef):
     global X
     X = [i for i in range(T)]
     plt.figure()
@@ -185,7 +190,7 @@ def draw(R,Ef):
         Xe = X
     else:
         Xe = [i / 100 for i in range(100 * T)]
-    Ye = [Env(x,Ef) for x in Xe]
+    Ye = [Env(x, Ef) for x in Xe]
     plt.plot(Xe, Ye, X, R)
     plt.savefig("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F + "_tested_on_" + E + ".png")
     plt.close()
@@ -199,13 +204,14 @@ def gamma_draw(L):
     taue = L[(3 * N - 3):(4 * N - 3)]  # We suppose the values are already sorted
     e = L[(4 * N - 3):(5 * N - 3)]
     r = L[(5 * N - 3):(6 * N - 3)]
-    gain_opt =  gain_draw(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr)
-    file = open("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F + "_tested_on_" + E + ".txt",'w')
+    gain_opt = gain_draw(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr)
+    file = open("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F + "_tested_on_" + E + ".txt", 'w')
     file.write("Paramètres optimisés : " + str(L) + "\n")
     file.write("Gain obtenu : " + str(gain_opt) + "\n")
     file.write("Mémoires : " + str(M) + "\n")
     file.write("Variations de Mémoires : " + str(variation_mem(M)))
     file.close()
+
 
 def gain_pred(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr):
     global M
@@ -214,8 +220,8 @@ def gain_pred(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr):
     Ef = []
     if E == "random":
         Ef = [2 * np.random.random() - 1 for j in range(T)]
-    R[0] = Env(0,Ef)
-    M = [[Env(0,Ef)] * T for j in range(N)]
+    R[0] = Env(0, Ef)
+    M = [[Env(0, Ef)] * T for j in range(N)]
     for t in range(T - 1):
         for i in range(N):
             sume = [R[s] * m(t - s, taue[i]) for s in range(t + 1)]
@@ -237,11 +243,12 @@ def gain_pred(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr):
         c = [elt ** 2 for elt in cplus]
         b = b + c
         d = [elt ** 2 for elt in r]
-        Fit[t] = np.exp(- (wf * (R[t] - Env(t,Ef)) ** 2) - (we * sum(a)) - (wc * sum(b)) - (wr * sum(d)))
-    draw_pred(R,Ef)
+        Fit[t] = np.exp(- (wf * (R[t] - Env(t, Ef)) ** 2) - (we * sum(a)) - (wc * sum(b)) - (wr * sum(d)))
+    draw_pred(R, Ef)
     return sum(Fit)
 
-def draw_pred(R,Ef):
+
+def draw_pred(R, Ef):
     global X
     X = [i for i in range(T)]
     plt.figure()
@@ -249,10 +256,11 @@ def draw_pred(R,Ef):
         Xe = X
     else:
         Xe = [i / 100 for i in range(100 * T)]
-    Ye = [Env(x,Ef) for x in Xe]
+    Ye = [Env(x, Ef) for x in Xe]
     plt.plot(Xe, Ye, X, R)
     plt.savefig("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + E + "_prediction.png")
     plt.close()
+
 
 def prediction(L):
     cminus = L[:(N - 1)]
@@ -261,14 +269,14 @@ def prediction(L):
     taue = L[(3 * N - 3):(4 * N - 3)]  # We suppose the values are already sorted
     e = L[(4 * N - 3):(5 * N - 3)]
     r = L[(5 * N - 3):(6 * N - 3)]
-    gain_opt =  gain_pred(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr)
-    file = open("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + E + "_prediction.txt",'w')
+    gain_opt = gain_pred(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr)
+    file = open("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + E + "_prediction.txt", 'w')
     file.write("Paramètres optimisés : " + str(L) + "\n")
     file.write("Gain obtenu : " + str(gain_opt) + "\n")
     file.write("Mémoires : " + str(M) + "\n")
     file.write("Variations de Mémoires : " + str(variation_mem(M)))
     file.close()
-    
+
 
 def parcours_local(param, fit, step):
     end = True
@@ -452,33 +460,49 @@ def create_player_no_tau(tauminus, taue):
     return player
 
 
-def opti_parcours_local():
-    params = [create_player() for i in range(10)]
-    c = 0
-    opt_fit = 0
-    f = open("opti_local.txt",'w')
-    for param in params:
+def opti_parcours_local(param=None):
+    if param:
         end = False
         step = 0.1
         fit = gamma(param)
         counter = 0
-        while counter <= 0:  # We end once every parameter is locally optimized at the same time
+        ncount = 0
+        while counter <= 2:  # We end once every parameter is locally optimized at the same time
             param, end, fit = parcours_local(param, fit, step)
-            print("1 Tour")
+            ncount+=1
+            print(ncount, " turn done")
             if end:
+                print("Division du pas")
                 counter += 1
                 step /= 8
-        print("Paramètres optimisés")
-        c += 1
-        f.write("Mémoires à la fin : " + str(M) + "\n")
-        f.write("Paramètres optimisés : " + str(param) + "\n")
-        f.write("Gain optimal : " + str(fit) + "\n")
-        M_data = np.array(M)
-        M_data = M_data.transpose()
-        if fit > opt_fit:
-            opt_param = param
-            opt_fit = fit
-    return opt_param
+        return param
+    else:
+        params = [create_player() for i in range(10)]
+        c = 0
+        opt_fit = 0
+        f = open("opti_local.txt", 'w')
+        for param in params:
+            end = False
+            step = 0.1
+            fit = gamma(param)
+            counter = 0
+            while counter <= 3:  # We end once every parameter is locally optimized at the same time
+                param, end, fit = parcours_local(param, fit, step)
+                print("1 Tour")
+                if end:
+                    counter += 1
+                    step /= 8
+            print("Paramètres optimisés")
+            c += 1
+            f.write("Mémoires à la fin : " + str(M) + "\n")
+            f.write("Paramètres optimisés : " + str(param) + "\n")
+            f.write("Gain optimal : " + str(fit) + "\n")
+            M_data = np.array(M)
+            M_data = M_data.transpose()
+            if fit > opt_fit:
+                opt_param = param
+                opt_fit = fit
+        return opt_param
 
 
 def opti_parcours_local_no_tau():
@@ -576,16 +600,27 @@ def init_pop(nbPlayer):
     return pop
 
 
+def vibration(pop):
+    for i in range(nbVib):
+        ind = rand_player(pop)
+        p = rand_list()
+        d = - depthVib * np.random.random() - 2
+        a = np.random.random() - 0.5
+        pop[ind][p] += a * 10 ** d
+    return (pop)
+
+
 def genetic_opt():
     pop = init_pop(nPlayer)
     for i in range(nbTour):
-        # print('This is round number: ' + str(i))
+        print('This is round number: ' + str(i))
         pop = select_pop(pop)
         # print('The best valuation being :')
         # print(gamma(pop[0])[0])
         new_player(pop)
         croisement(pop)
         mutation(pop)
+        vibration(pop)
     sort_pop(pop)
     return pop[0]
 
@@ -625,12 +660,13 @@ current_position = 0
 NT_long = 0
 for i in N_liste:
     for j in T_liste:
-        NT_long += i*j*(len(E_liste)**2)
+        NT_long += i * j * (len(E_liste) ** 2)
+
 
 def how_long():
     global current_position
-    current_position += N*T
-    print('\r', floor(current_position / NT_long * 10000)/100, '%', sep=' ', end=' ', flush=True)
+    current_position += N * T
+    print('\r', floor(current_position / NT_long * 10000) / 100, '%', sep=' ', end=' ', flush=True)
     return
 
 
@@ -653,13 +689,14 @@ def benchmark():
     return res
 
 
-def main(i,j,k):
-    global N,T,E,F
+def main(i, j, k):
+    global N, T, E, F
     N = N_liste[i]
     T = T_liste[j]
     E = E_liste[k]
-    how_long()
+    # how_long()
     P_opt = genetic_opt()
+    P_opt = opti_parcours_local(P_opt)
     prediction(P_opt)
     for Fi in range(len(E_liste)):
         F = E_liste[Fi]
@@ -679,6 +716,7 @@ def main(i,j,k):
     file.write(str(res))
     file.close()"""
 
-i,j,k = sys.argv[1:]
-i,j,k = int(i),int(j),int(k)
-main(i,j,k)
+
+# i,j,k = sys.argv[1:]
+# i,j,k = int(i),int(j),int(k)
+main(0, 1, 0)
