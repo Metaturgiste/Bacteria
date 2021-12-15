@@ -50,7 +50,7 @@ data_list_no_tau = ["cminus" + str(i) for i in range(N - 1)] + ["cplus" + str(i)
                        "r" + str(i) for i in range(N)]
 M = [[0] * T for i in range(N)]
 X = [i for i in range(T)]
-wf, we, wc, wr = 1, 0.1, 0.1, 0.1
+wf, we, wc, wr = 1, 0, 0, 0
 meta_para_liste = [N_liste, T_liste, E_liste, E_liste]
 len_meta_list = [len(i) for i in meta_para_liste]
 full_len = reduce(mul, len_meta_list, 1)
@@ -84,11 +84,11 @@ def Env(x, Ef):
 
 
 def noisei(x):
-    return np.random.random()*0.1
+    return 0
 
 
 def noiser(x):
-    return np.random.random()*0.1
+    return 0
 
 
 def m(deltat, tau):
@@ -717,6 +717,6 @@ def main(i, j, k):
     file.close()"""
 
 
-# i,j,k = sys.argv[1:]
-# i,j,k = int(i),int(j),int(k)
-main(0, 1, 0)
+i,j,k = sys.argv[1:]
+i,j,k = int(i),int(j),int(k)
+main(i, j, k)
