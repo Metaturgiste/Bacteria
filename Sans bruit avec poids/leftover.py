@@ -6,5 +6,5 @@ E_liste = ['cos(x)', 'tanh', '0', '1', 'croissant', 'random', 'Par_palier', 'sin
 
 for i in leftover:
     r = i.strip().split(',')
-    print(str(N_string.index(r[0])) + ' ' + str(T_string.index(r[1])) + ' ' + str(E_liste.index(r[2])))
+    print(str(N_string.index(r[0])) + ',' + str(T_string.index(r[1])) + ',' + str(E_liste.index(r[2])))
 
