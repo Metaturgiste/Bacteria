@@ -688,12 +688,20 @@ def benchmark():
 
     return res
 
+def no_repeat(n, t, e, f):
+    file_exists = exists("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F + "_tested_on_" + E + ".txt")
+    return file_exists
 
 def main(i, j, k):
     global N, T, E, F
     N = N_liste[i]
     T = T_liste[j]
     E = E_liste[k]
+
+    print(no_repeat(N, T, E, F))
+    if no_repeat(N, T, E, F):
+        return()
+
     # how_long()
     P_opt = genetic_opt()
     P_opt = opti_parcours_local(P_opt)
