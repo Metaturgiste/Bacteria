@@ -690,8 +690,9 @@ def benchmark():
     return res
 
 def no_repeat(n, t, e, f):
-    file_exists = exists("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F + "_tested_on_" + "0" + ".txt")
-    print(file_exists)
+    file_name = "results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F + "_tested_on_" + "0" + ".txt"
+    file_exists = exists(file_name)
+    print(file_name)
     return file_exists
 
 def main(i, j, k):
