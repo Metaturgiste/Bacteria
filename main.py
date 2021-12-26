@@ -690,9 +690,10 @@ def benchmark():
     return res
 
 def no_repeat(n, t, e, f):
-    file_name = "results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F + "_tested_on_" + "0" + ".txt"
+    file_name = "results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + E + "_tested_on_" + "0" + ".txt"
     file_exists = exists(file_name)
     print(file_name)
+    print(file_exists)
     return file_exists
 
 def main(i, j, k):
@@ -701,7 +702,6 @@ def main(i, j, k):
     T = T_liste[j]
     E = E_liste[k]
 
-    print(no_repeat(N, T, E, F))
     if no_repeat(N, T, E, F):
         return()
 
