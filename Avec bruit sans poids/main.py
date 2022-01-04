@@ -12,6 +12,7 @@ import csv
 from operator import mul
 from functools import reduce
 import sys
+from os.path import exists
 
 N_string = ['2', '5', '8', '11']
 N_liste = [2, 5, 8, 11]
@@ -23,9 +24,11 @@ tau_liste = [[0.5, 0.1, 1], [0.1, 1, 3, 10, 0.01, 0.1, 1, 3, 10],
              [0.1, 0.5, 1, 3, 10, 30, 100, 0.01, 0.1, 0.5, 1, 3, 10, 30, 100]]
 tau = [0]
 
-E_liste = ['cos(x)', 'tanh', '0', '1', 'croissant', 'random', 'Par_palier', 'sin_amorti','cos_petit']
+E_liste = ['cos(x)', 'tanh', '0', '1', 'croissant', 'random', 'Par_palier', 'sin_amorti','cos_petit','rand_fixe']
 E = E_liste[0]
 F = E_liste[0]
+Random_F = []
+
 
 facteurRand = 1
 nbTour = 200
@@ -81,14 +84,19 @@ def Env(x, Ef):
         return 2 * (x / T) - 1
     elif E == 'cos_petit':
         return 0.1*cos(x/12)
+    elif E == 'rand_fixe':
+        if Random_E  == []:
+            for i in range(T):
+                Random_E[i] = 2 * np.random.random() - 1
+        return Random_E[x]
 
 
 def noisei(x):
-    return np.random.random()*0.1
+    return 0.05*(2*np.random.random()-1)
 
 
 def noiser(x):
-    return np.random.random()*0.1
+    return 0.05*(2*np.random.random()-1)
 
 
 def m(deltat, tau):
@@ -206,10 +214,10 @@ def gamma_draw(L):
     r = L[(5 * N - 3):(6 * N - 3)]
     gain_opt = gain_draw(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr)
     file = open("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F + "_tested_on_" + E + ".txt", 'w')
-    file.write("Paramètres optimisés : " + str(L) + "\n")
+    file.write("ParamÃ¨tres optimisÃ©s : " + str(L) + "\n")
     file.write("Gain obtenu : " + str(gain_opt) + "\n")
-    file.write("Mémoires : " + str(M) + "\n")
-    file.write("Variations de Mémoires : " + str(variation_mem(M)))
+    file.write("MÃ©moires : " + str(M) + "\n")
+    file.write("Variations de MÃ©moires : " + str(variation_mem(M)))
     file.close()
 
 
@@ -271,10 +279,10 @@ def prediction(L):
     r = L[(5 * N - 3):(6 * N - 3)]
     gain_opt = gain_pred(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr)
     file = open("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + E + "_prediction.txt", 'w')
-    file.write("Paramètres optimisés : " + str(L) + "\n")
+    file.write("ParamÃ¨tres optimisÃ©s : " + str(L) + "\n")
     file.write("Gain obtenu : " + str(gain_opt) + "\n")
-    file.write("Mémoires : " + str(M) + "\n")
-    file.write("Variations de Mémoires : " + str(variation_mem(M)))
+    file.write("MÃ©moires : " + str(M) + "\n")
+    file.write("Variations de MÃ©moires : " + str(variation_mem(M)))
     file.close()
 
 
@@ -492,10 +500,10 @@ def opti_parcours_local(param=None):
                 if end:
                     counter += 1
                     step /= 8
-            print("Paramètres optimisés")
+            print("ParamÃ¨tres optimisÃ©s")
             c += 1
-            f.write("Mémoires à la fin : " + str(M) + "\n")
-            f.write("Paramètres optimisés : " + str(param) + "\n")
+            f.write("MÃ©moires Ã  la fin : " + str(M) + "\n")
+            f.write("ParamÃ¨tres optimisÃ©s : " + str(param) + "\n")
             f.write("Gain optimal : " + str(fit) + "\n")
             M_data = np.array(M)
             M_data = M_data.transpose()
@@ -520,7 +528,7 @@ def opti_parcours_local_no_tau():
             if end:
                 counter += 1
                 step /= 8
-        print("Paramètres optimisés")
+        print("ParamÃ¨tres optimisÃ©s")
         if fit > opt_fit:
             opt_param = param
             opt_fit = fit
@@ -680,16 +688,19 @@ def benchmark():
             F = E_liste[Fi]
             F, E = E, F
             res_gamma = gamma_draw(P_opt)
-            res[Ni][Ti][Fi][Ei].append(P_opt)  # Paramètres
+            res[Ni][Ti][Fi][Ei].append(P_opt)  # ParamÃ¨tres
             res[Ni][Ti][Fi][Ei].append(res_gamma)  # Gain
-            res[Ni][Ti][Fi][Ei].append(M)  # Mémoires
-            res[Ni][Ti][Fi][Ei].append(variation_mem(M))  # Variations de mémoires
+            res[Ni][Ti][Fi][Ei].append(M)  # MÃ©moires
+            res[Ni][Ti][Fi][Ei].append(variation_mem(M))  # Variations de mÃ©moires
             F, E = E, F
 
     return res
 
 def no_repeat(n, t, e, f):
-    file_exists = exists("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F + "_tested_on_" + str(E_liste[-1]) + ".txt")
+    file_name = "results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + E + "_tested_on_" + "0" + ".txt"
+    file_exists = exists(file_name)
+    print(file_name)
+    print(file_exists)
     return file_exists
 
 def main(i, j, k):
@@ -698,7 +709,6 @@ def main(i, j, k):
     T = T_liste[j]
     E = E_liste[k]
 
-    print(no_repeat(N, T, E, F))
     if no_repeat(N, T, E, F):
         return()
 
