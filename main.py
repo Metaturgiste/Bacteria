@@ -77,7 +77,7 @@ def Env(x, Ef):
     elif E == "1":
         return 1
     elif E == "random":
-        return Ef[x]
+        return Ef[int(x)]
     elif E == "sin_amorti":
         return ((x + 1) ** (-1 / 3)) * sin(12 * (x / T))
     elif E == 'croissant':
@@ -88,7 +88,7 @@ def Env(x, Ef):
         if Random_E  == []:
             for i in range(T):
                 Random_E.append(2 * np.random.random() - 1)
-        return Random_E[x]
+        return Random_E[int(x)]
 
 
 def noisei(x):
