@@ -87,7 +87,7 @@ def Env(x, Ef):
     elif E == 'rand_fixe':
         if Random_E  == []:
             for i in range(T):
-                Random_E[i].append(2 * np.random.random() - 1)
+                Random_E.append(2 * np.random.random() - 1)
         return Random_E[x]
 
 
