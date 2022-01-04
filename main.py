@@ -29,7 +29,7 @@ E = E_liste[0]
 F = E_liste[0]
 
 facteurRand = 1
-nbTour = 100
+nbTour = 200
 nPlayer = 50
 selectPop = 10
 nbBad = 3
@@ -206,7 +206,7 @@ def gamma_draw(L):
     e = L[(4 * N - 3):(5 * N - 3)]
     r = L[(5 * N - 3):(6 * N - 3)]
     gain_opt = gain_draw(cminus, cplus, tauminus, taue, e, r, wf, we, wc, wr)
-    file = open("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F + "_tested_on_" + E + ".txt", 'w')
+    file = open("results_N_" + str(N) + "_T_" + str(T) + "_optimized_on_" + F"" + "_tested_on_" + E + ".txt", 'w')
     file.write("Paramètres optimisés : " + str(L) + "\n")
     file.write("Gain obtenu : " + str(gain_opt) + "\n")
     file.write("Mémoires : " + str(M) + "\n")
@@ -707,7 +707,7 @@ def main(i, j, k):
 
     # how_long()
     P_opt = genetic_opt()
-    P_opt = opti_parcours_local(P_opt)
+    #P_opt = opti_parcours_local(P_opt)
     prediction(P_opt)
     for Fi in range(len(E_liste)):
         F = E_liste[Fi]

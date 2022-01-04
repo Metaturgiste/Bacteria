@@ -28,7 +28,7 @@ E = E_liste[0]
 F = E_liste[0]
 
 facteurRand = 1
-nbTour = 100
+nbTour = 200
 nPlayer = 50
 selectPop = 10
 nbBad = 3
@@ -704,7 +704,7 @@ def main(i, j, k):
 
     # how_long()
     P_opt = genetic_opt()
-    P_opt = opti_parcours_local(P_opt)
+    #P_opt = opti_parcours_local(P_opt)
     prediction(P_opt)
     for Fi in range(len(E_liste)):
         F = E_liste[Fi]
