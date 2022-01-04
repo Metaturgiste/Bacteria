@@ -27,7 +27,7 @@ tau = [0]
 E_liste = ['cos(x)', 'tanh', '0', '1', 'croissant', 'random', 'Par_palier', 'sin_amorti','cos_petit','rand_fixe']
 E = E_liste[0]
 F = E_liste[0]
-Random_F = []
+Random_E = []
 
 facteurRand = 1
 nbTour = 200
@@ -59,6 +59,7 @@ full_len = reduce(mul, len_meta_list, 1)
 
 
 def Env(x, Ef):
+    global E
     if E == "Par_palier":
         if (x >= 0 and x < 6) or (x >= 30 and x < 47) or (x >= 70 and x < 79):
             return -1
@@ -86,7 +87,7 @@ def Env(x, Ef):
     elif E == 'rand_fixe':
         if Random_E  == []:
             for i in range(T):
-                Random_E[i] = 2 * np.random.random() - 1
+                Random_E[i].append(2 * np.random.random() - 1)
         return Random_E[x]
 
 
