@@ -9,6 +9,7 @@ import time
 import random
 import math as m
 import matplotlib.pyplot as plt
+import numpy as np
 
 J = 1
 K = -0.35
@@ -24,8 +25,8 @@ def initpop(n):
     y = [[popin()] for i in range(n)]
     o = [[popin()*m.pi] for i in range(n)]
     global ki, ji
-    ki = [popin()*3 for i in range(n)]
-    ji = [popin()*3 for i in range(n)]
+    ki = [K for i in range(n)]
+    ji = [J for i in range(n)]
     #print('yup', x, y, o, 'yay')
     return x, y, o
 
@@ -39,7 +40,7 @@ def sumpartx(x, y, o, i, j, t):
     return (x[j][t]-x[i][t])/dist(x,y,i,j,t)*(1+ji[i]*m.cos(o[j][t]-o[i][t]))-(x[j][t]-x[i][t])/(dist(x,y,i,j,t)**2)
 
 def sumparty(x, y, o, i, j, t):
-    return (y[j][t]-y[i][t])/dist(x,y,i,j,t)*(1+J*m.cos(o[j][t]-o[i][t]))-(y[j][t]-y[i][t])/(dist(x,y,i,j,t)**2)
+    return (y[j][t]-y[i][t])/dist(x,y,i,j,t)*(1+ji[i]*m.cos(o[j][t]-o[i][t]))-(y[j][t]-y[i][t])/(dist(x,y,i,j,t)**2)
 
 def sumparto(x, y, o, i, j, t):
     return ki[i]*m.sin(o[j][t]-o[i][t])/dist(x,y,i,j,t)
@@ -74,7 +75,7 @@ def pwety(x, y, o, s):
 def exply(x, y, o, s):
     n = len(x)
     for i in range(n):
-        plt.plot(x[i][3900:], y[i][3900:])
+        plt.plot([x[i][-1], x[i][-1]+0.03*m.cos(o[i][-1])], [y[i][-1],y[i][-1]+0.03*m.sin(o[i][-1])])
     plt.savefig(s)
     plt.show()
     plt.close()
@@ -117,19 +118,30 @@ def sep(y, n):
     
     return
     
+def whr(x, y, o, s):
+    n = len(x)
+    hi = []
+    for i in range(n):
+        hi.append(x[i][-1])
+        print(x[i][-1])
+    
+    ax = plt.axes(projection ='3d')
+    ax.plot_trisurf(np.asarray(ji), np.asarray(ki), np.asarray(hi),  cmap ='viridis', edgecolor ='green')
+    plt.savefig("ThePropreties")
 
 def main(k, j):
     global K, J
     K = k
     J = j
-    n = 1000
+    n = 100
     x, y, o = simu(4000, n)
     pwety(x, y, o, "Hist for k " +  str(K) + " and J "+ str(J) + ".jpeg")
     exply(x, y, o, "Last for k " +  str(K) + " and J "+ str(J) + ".jpeg")
-    sep(y, n)
+    #sep(y, n)
+    whr(x, y, o, "Rep for K's and J's")
     
     
 a = time.process_time()
-main(-0.4, 1)
+#main(-0.4, 1)
 b = time.process_time()
 print(b-a)
