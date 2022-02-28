@@ -131,9 +131,9 @@ def whr(x, y, o, s):
 
 def main(k, j):
     global K, J
-    K = k
-    J = j
-    n = 100
+    K = (k-20)*0.1
+    J = (j-20)*0.1
+    n = 1000
     x, y, o = simu(4000, n)
     pwety(x, y, o, "Hist for k " +  str(K) + " and J "+ str(J) + ".jpeg")
     exply(x, y, o, "Last for k " +  str(K) + " and J "+ str(J) + ".jpeg")

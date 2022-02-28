@@ -1,3 +1,3 @@
-for i in {-2..2..0.1}; do for j in {-2..2..0.1}; do 
-screen -d -m bash -c "python3 ex.py $i $j" #& 
+for ((i=0; 40-$i; i++)); do for ((j=0; 40-$j; j++)); do 
+screen -d -m -S w$i$j bash -c "python3 ex.py $i $j" #& 
 done; done;
