@@ -10,6 +10,7 @@ import random
 import math as m
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
 
 J = 1
 K = -0.35
@@ -139,9 +140,13 @@ def main(k, j):
     exply(x, y, o, "Last for k " +  str(K) + " and J "+ str(J) + ".jpeg")
     #sep(y, n)
     whr(x, y, o, "Rep for K's and J's")
-    
-    
+
+
+i,j = sys.argv[1:]
+i,j = int(i),int(j)
+
+
 a = time.process_time()
-#main(-0.4, 1)
+main(i, j)
 b = time.process_time()
 print(b-a)
