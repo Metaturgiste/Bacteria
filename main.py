@@ -29,7 +29,7 @@ E = E_liste[0]
 F = E_liste[0]
 Random_E = []
 
-facteurRand = 1
+facteurRand = 2
 nbTour = 200
 nPlayer = 50
 selectPop = 10
@@ -410,11 +410,10 @@ def parcours_local_no_tau(param, fit, step, tauminus, taue):
     return param, end, fit
 
 
-facteurRand = 1
 
 
 def rand_R():
-    return (1 / (1 - np.random.random())) * facteurRand
+    return (1 / (1 - np.random.random()) - 1) * facteurRand
 
 
 def sort_tau(player):
@@ -714,7 +713,7 @@ def main(i, j, k):
 
     # how_long()
     P_opt = genetic_opt()
-    #P_opt = opti_parcours_local(P_opt)
+    P_opt = opti_parcours_local(P_opt)
     prediction(P_opt)
     for Fi in range(len(E_liste)):
         F = E_liste[Fi]
